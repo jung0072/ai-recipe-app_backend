@@ -3,7 +3,7 @@ import cors from "cors";
 import openaiRecipeGenerateRoute from "./route";
 
 const app: Express = express();
-const PORT = process.env.PORT || 6001;
+const PORT = "159.203.19.109";
 
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
