@@ -4,8 +4,9 @@ import { openaiRecipeGenerateService } from "./service";
 const route = express.Router();
 
 route.post("/", async (req: Request, res: Response) => {
-  const response = await openaiRecipeGenerateService(req);
-  res.status(response["status"]);
+    console.log("Request body: ", req.body);
+  const response = await openaiRecipeGenerateService(req, res);
+  res.status(response?["status"] || 200 );
   res.send(response);
 });
 

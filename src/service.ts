@@ -8,8 +8,6 @@ import { ChatOpenAI } from "langchain/chat_models/openai";
 import { ChatPromptTemplate } from "langchain/prompts";
 import { BaseCallbackHandler } from "langchain/callbacks";
 
-import http, { IncomingMessage } from "http";
-
 export const openaiRecipeGenerateService = async (
   req: Request,
   res: Response
