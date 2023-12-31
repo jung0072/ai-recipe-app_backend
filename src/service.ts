@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-const { Readable } = require("stream");
+import { EventEmitter } from "events";
 
 import * as cheerio from "cheerio";
 import axios from "axios";
@@ -7,6 +7,10 @@ import axios from "axios";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { ChatPromptTemplate } from "langchain/prompts";
 import { BaseCallbackHandler } from "langchain/callbacks";
+import { Stream } from "stream";
+
+import dotenv from "dotenv";
+dotenv.config();
 
 export const openaiRecipeGenerateService = async (
   req: Request,
@@ -64,7 +68,8 @@ Enjoy the Zucchini Orzo Salad with Pepperoncini Dressing as an easy, delicious s
   }
 
   try {
-    const { url, prompt } = await req.json();
+    const { url } = await req.body;
+
     const AxiosInstance = axios.create();
 
     const response = await AxiosInstance.get(url, {
@@ -84,7 +89,7 @@ Enjoy the Zucchini Orzo Salad with Pepperoncini Dressing as an easy, delicious s
     $(simple_condition).each((index: number, element: cheerio.AnyNode) => {
       recipeData += $(element).text() + "\n";
     });
-    // console.log("recipeData", recipeData.trim());
+    // console.log("recipeData =====>", recipeData.trim());
 
     const template = `
 For the following recipeData paraphrase the recipe in a clean format with the text scrapped from a website. Keep all the details from the instructions. Divide as many steps as you need.
@@ -102,63 +107,50 @@ The markdown should contain the following information: title, total_yield, descr
 
     class MyCustomHandler extends BaseCallbackHandler {
       name = "MyCustomHandler";
-      controller: any;
+      stream: any;
 
-      constructor(controller: any) {
+      constructor(stream: any) {
         super();
-        this.controller = controller;
+        this.stream = stream;
+        console.log("MyCustomHandler constructor");
       }
 
       handleLLMNewToken(token: any) {
-        this.controller.enqueue(token);
+        eventEmitter.emit("newToken", token); // Emit new token event
       }
 
       handleLLMEnd() {
-        this.controller.close();
+        eventEmitter.emit("end"); // Emit end event
       }
     }
+    const eventEmitter = new EventEmitter();
 
-    const stream = new Readable({
-      async start(controller) {
-        const chatModel = new ChatOpenAI({
-          openAIApiKey: process.env.OPENAI_API_KEY,
-          modelName: "gpt-3.5-turbo",
-          streaming: true,
-          callbacks: [new MyCustomHandler(controller)],
-        });
-        chatModel.predictMessages(messages);
+    const stream = new Stream.Readable({
+      read(size) {
+        // Do nothing here, tokens will be pushed by the custom handler
       },
     });
 
-    stream.on("data", (chunk: Buffer) => {
-      const payloads = chunk.toString().split("\n\n");
-      for (const payload of payloads) {
-        if (payload.includes("[DONE]")) return;
-        if (payload.startsWith("data:")) {
-          const data = JSON.parse(payload.replace("data: ", ""));
-          try {
-            const chunk: undefined | string = data.choices[0].delta?.content;
-            if (chunk) {
-              console.log(chunk);
-            }
-          } catch (error) {
-            console.log(`Error with JSON.parse and ${payload}.\n${error}`);
-          }
-        }
-      }
+    stream.pipe(res);
+
+    const chatModel = new ChatOpenAI({
+      openAIApiKey: process.env.OPENAI_API_KEY,
+      modelName: "gpt-3.5-turbo",
+      streaming: true,
+      callbacks: [new MyCustomHandler(stream)],
     });
 
-    stream.on("end", () => {
-      setTimeout(() => {
-        console.log("\nStream done");
-        res.send({ message: "Stream done" });
-      }, 10);
+    eventEmitter.on("newToken", (token) => {
+      stream.push(token);
     });
 
-    stream.on("error", (err: Error) => {
-      console.log(err);
-      res.send(err);
+    eventEmitter.on("end", () => {
+      stream.push(null); // Signal end of the stream
     });
+
+    chatModel.predictMessages(messages);
+
+    return;
   } catch (error: any) {
     console.error(error);
     return {
@@ -167,20 +159,3 @@ The markdown should contain the following information: title, total_yield, descr
     };
   }
 };
-
-async function streamToString(stream: ReadableStream): Promise<string> {
-  const reader = stream.getReader();
-  let result = "";
-
-  while (true) {
-    const { value, done } = await reader.read();
-
-    if (done) {
-      break;
-    }
-
-    result += value;
-  }
-
-  return result;
-}

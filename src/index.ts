@@ -3,11 +3,17 @@ import cors from "cors";
 import openaiRecipeGenerateRoute from "./route";
 
 const app: Express = express();
-const PORT = "159.203.19.109";
+const PORT = process.env.PORT || 6001;
 
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+
+const corsOptions = {
+  origin: "http://localhost:3000",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 app.use("/api/recipe/generate", openaiRecipeGenerateRoute);
 
