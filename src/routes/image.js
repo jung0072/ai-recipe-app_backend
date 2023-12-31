@@ -13,7 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const service_1 = require("./service");
+const imageGenerate_1 = require("../services/imageGenerate");
 const route = express_1.default.Router();
-route.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () { return (0, service_1.openaiRecipeGenerateService)(req, res); }));
+route.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () { return res.send("GET api/image"); }));
+route.post("/generate", (req, res) => __awaiter(void 0, void 0, void 0, function* () { return (0, imageGenerate_1.dalleImageGenerateService)(req, res); }));
 exports.default = route;
