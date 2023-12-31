@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 8080;
 app.use(express_1.default.json({ limit: "5mb" }));
 app.use(express_1.default.urlencoded({ extended: true }));
 const corsOptions = {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://recipeasy-v1.vercel.app"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     optionsSuccessStatus: 200,
 };
