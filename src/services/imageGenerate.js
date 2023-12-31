@@ -18,7 +18,7 @@ const openai_2 = require("langchain/chat_models/openai");
 const calculate_cost_1 = require("../utils/calculate-cost");
 const prompts_1 = require("langchain/prompts");
 const dalleImageGenerateService = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("\x1b[32m>>> API POST api/image/generate <<<\x1b[0m");
+    console.log("\x1b[32m>>> API POST image/generate <<<\x1b[0m");
     let totalInputTokens = 0;
     let totalOutputTokens = 0;
     const chatModel = new openai_2.ChatOpenAI({
@@ -37,7 +37,6 @@ const dalleImageGenerateService = (req, res) => __awaiter(void 0, void 0, void 0
     });
     const openai = new openai_1.default();
     const generateImage = (prompt) => __awaiter(void 0, void 0, void 0, function* () {
-        //   console.log(`( prompt )===============>`, prompt);
         try {
             const response = yield openai.images.generate({
                 model: "dall-e-3",
@@ -51,14 +50,14 @@ const dalleImageGenerateService = (req, res) => __awaiter(void 0, void 0, void 0
             console.error(error);
         }
     });
-    function generatePromptForDallE(topLvBlocksMarkdown) {
+    function generatePromptForDallE(recipe_markdown) {
         return __awaiter(this, void 0, void 0, function* () {
-            const instruction = `You are an experienced AI image generation prompt engineer. Write a prompt for Dall-E-3 to create an image based on this recipe: ${topLvBlocksMarkdown}`;
+            const instruction = `You are an experienced AI image generation prompt engineer. Write a prompt for Dall-E-3 to create an image based on this recipe: ${recipe_markdown}`;
             const prompt_template = prompts_1.ChatPromptTemplate.fromMessages([
                 ["system", instruction],
             ]);
             const messages = yield prompt_template.formatMessages({
-                topLvBlocksMarkdown: topLvBlocksMarkdown,
+                topLvBlocksMarkdown: recipe_markdown,
             });
             const promptForDallE = yield chatModel
                 .predictMessages(messages)
@@ -70,10 +69,9 @@ const dalleImageGenerateService = (req, res) => __awaiter(void 0, void 0, void 0
         });
     }
     try {
-        console.log(`( req.body )===============>`, req.body);
-        const { block } = req.body;
-        console.log(`( blocks )===============>`, block);
-        const promptForDallE = yield generatePromptForDallE(block);
+        const { block: recipe_markdown } = req.body;
+        console.log(`( recipe_markdown )===============>`, recipe_markdown);
+        const promptForDallE = yield generatePromptForDallE(recipe_markdown);
         console.log(`( promptForDallE )===============>`, promptForDallE);
         const completion = yield generateImage(promptForDallE);
         console.log(`( completion )===============>`, completion);

@@ -129,7 +129,6 @@ The markdown should contain the following information: title, total_yield, descr
                 super();
                 this.name = "MyCustomHandler";
                 this.stream = stream;
-                console.log("MyCustomHandler constructor");
             }
             handleLLMNewToken(token) {
                 eventEmitter.emit("newToken", token); // Emit new token event

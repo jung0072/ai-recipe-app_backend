@@ -9,7 +9,7 @@ export const dalleImageGenerateService = async (
   req: Request,
   res: Response
 ) => {
-  console.log("\x1b[32m>>> API POST api/image/generate <<<\x1b[0m");
+  console.log("\x1b[32m>>> API POST image/generate <<<\x1b[0m");
 
   let totalInputTokens = 0;
   let totalOutputTokens = 0;
@@ -32,7 +32,6 @@ export const dalleImageGenerateService = async (
   const openai = new OpenAI();
 
   const generateImage = async (prompt: string) => {
-    //   console.log(`( prompt )===============>`, prompt);
     try {
       const response = await openai.images.generate({
         model: "dall-e-3",
@@ -66,7 +65,9 @@ export const dalleImageGenerateService = async (
 
   try {
     const { block: recipe_markdown } = req.body;
+    console.log(`( recipe_markdown )===============>`, recipe_markdown);
     const promptForDallE = await generatePromptForDallE(recipe_markdown);
+    console.log(`( promptForDallE )===============>`, promptForDallE);
 
     const completion = await generateImage(promptForDallE);
     console.log(`( completion )===============>`, completion);

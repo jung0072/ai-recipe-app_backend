@@ -1,7 +1,13 @@
 import express, { Express, Request, Response } from "express";
+
 import cors from "cors";
+import dotenv from "dotenv";
+
 import openaiRecipeGenerateRoute from "./routes/recipe";
 import dalleImageGenerateRoute from "./routes/image";
+
+dotenv.config();
+
 
 const app: Express = express();
 const PORT = process.env.PORT || 8080;
