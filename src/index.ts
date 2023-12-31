@@ -9,11 +9,17 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://recipeasy-v1.vercel.app"],
+  origin: ["http://localhost:3000"],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  optionsSuccessStatus: 200,
+};
+const corsOptions2 = {
+  origin: ["https://recipeasy-v1.vercel.app/"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
+app.use(cors(corsOptions2));
 
 app.use("/api/recipe/generate", openaiRecipeGenerateRoute);
 
