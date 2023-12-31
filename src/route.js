@@ -15,15 +15,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const service_1 = require("./service");
 const route = express_1.default.Router();
-route.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const stream = yield (0, service_1.openaiRecipeGenerateService)(req, res);
-    //   if ("status" in stream) {
-    //     console.log("stream.status: ", stream.status);
-    //     res.status(stream.status);
-    //   } else {
-    //     res.status(200);
-    //   }
-    // //   console.log("stream: ", stream);
-    //   res.send(stream);
-}));
+route.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () { return (0, service_1.openaiRecipeGenerateService)(req, res); }));
 exports.default = route;

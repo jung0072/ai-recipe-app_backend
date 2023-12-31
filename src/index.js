@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const route_1 = __importDefault(require("./route"));
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 6001;
+const PORT = process.env.PORT || 8080;
 app.use(express_1.default.json({ limit: "5mb" }));
 app.use(express_1.default.urlencoded({ extended: true }));
 const corsOptions = {
