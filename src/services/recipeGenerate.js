@@ -146,7 +146,7 @@ The markdown should contain the following information: title, total_yield, descr
         stream.pipe(res);
         const chatModel = new openai_1.ChatOpenAI({
             openAIApiKey: process.env.OPENAI_API_KEY,
-            modelName: "gpt-3.5-turbo",
+            modelName: "gpt-4-1106-preview",
             streaming: true,
             callbacks: [new MyCustomHandler(stream)],
         });

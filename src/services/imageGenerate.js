@@ -69,7 +69,7 @@ const dalleImageGenerateService = (req, res) => __awaiter(void 0, void 0, void 0
         });
     }
     try {
-        const { block: recipe_markdown } = req.body;
+        const { recipe_markdown: recipe_markdown } = req.body;
         console.log(`( recipe_markdown )===============>`, recipe_markdown);
         const promptForDallE = yield generatePromptForDallE(recipe_markdown);
         console.log(`( promptForDallE )===============>`, promptForDallE);

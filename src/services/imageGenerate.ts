@@ -64,7 +64,7 @@ export const dalleImageGenerateService = async (
   }
 
   try {
-    const { block: recipe_markdown } = req.body;
+    const { recipe_markdown: recipe_markdown } = req.body;
     console.log(`( recipe_markdown )===============>`, recipe_markdown);
     const promptForDallE = await generatePromptForDallE(recipe_markdown);
     console.log(`( promptForDallE )===============>`, promptForDallE);
